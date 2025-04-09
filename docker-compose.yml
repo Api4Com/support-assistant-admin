@@ -1,0 +1,18 @@
+
+services:     
+
+  app:
+    profiles: 
+      - app
+    build:
+      context: .
+      target: development   
+    volumes:
+        - ./:/home/node/app
+    ports:
+      - '3000:3000'
+    command: >
+        sh -c "
+        yarn install &&
+        yarn dev --host"
+    env_file: .env.docker
