@@ -5,6 +5,11 @@ import { supportAssistantApiUrl } from "../http/client";
 const api4comProvider = restProvider(supportAssistantApiUrl);
 
 export const dataProvider = combineDataProviders((resource) => {
-  if (resource === 'customer-lookup') return api4comProvider;
-  else throw new Error(`Unknown resource: ${resource}`);
+  switch (resource) {
+    case 'customer-lookup':
+    case 'big-data-corp':
+      return api4comProvider;
+    default:
+      throw new Error(`Unknown resource: ${resource}`);
+  }
 });

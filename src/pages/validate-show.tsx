@@ -22,11 +22,11 @@ const ValidateShow = () => {
   }
 
   return (
-    <Show resource="customer-lookup" id={customerData.id || 'lookup-result'}>
+    <Show resource="customer-lookup" id={customerData.id || 'lookup-email-result'}>
       <TabbedShowLayout record={customerData} syncWithLocation={false}>
         <Tab label="API4COM">
           <Typography variant="h6" gutterBottom sx={{ mt: 2, fontWeight: 'bold' }}>
-            Informações Api4Com
+            Informações API4Com
           </Typography>
           <TextField source="api4com.domain" label="Domínio" />
           <TextField source="api4com.cpfCnpj" label="CPF/CNPJ" />
@@ -47,7 +47,7 @@ const ValidateShow = () => {
             source=''
             label="Utilizado Por Outras Organizações"
           />
-          {customerData.api4com.usedInOtherOrganizations?.length > 0 ? (
+          {customerData.api4com?.usedInOtherOrganizations?.length > 0 ? (
             <Box sx={{ 
               display: 'grid', 
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr))' },
@@ -80,89 +80,6 @@ const ValidateShow = () => {
               Nenhuma organização relacionada
             </Typography>
           )}
-        </Tab>
-
-        <Tab label="BigDataCorp">
-          <Typography variant="h6" gutterBottom sx={{ mt: 2, fontWeight: 'bold' }}>
-            Dados Pessoais
-          </Typography>
-          <TextField source="bigDataCorp.Result[0].RegistrationData.BasicData.Name" label="Nome Completo" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.BasicData.TaxIdNumber" label="CPF" />
-          <FunctionField
-            label="Gênero"
-            render={(record: any) => 
-              record.bigDataCorp.Result[0].RegistrationData.BasicData.Gender === 'M' ? 'Masculino' : 'Feminino'
-            }
-          />
-          <DateField source="bigDataCorp.Result[0].RegistrationData.BasicData.BirthDate" label="Data de Nascimento" />
-          <DateField source="bigDataCorp.Result[0].RegistrationData.BasicData.CapturedBirthDateFromRFSource" label="Data no Registro" />
-          <BooleanField 
-            source="bigDataCorp.Result[0].RegistrationData.BasicData.IsValidBirthDateInRFSource" 
-            label="Data Validada?" 
-            valueLabelTrue="Sim" 
-            valueLabelFalse="Não"
-          />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.BasicData.MotherName" label="Nome da Mãe" />
-          <FunctionField
-            label="Situação CPF"
-            render={(record: any) => {
-              const statusMap: Record<string, string> = {
-                'REGULAR': 'Regular',
-                'SUSPENDED': 'Suspenso',
-                'CANCELED': 'Cancelado'
-              };
-              return statusMap[record.bigDataCorp.Result[0].RegistrationData.BasicData.TaxIdStatus] || 
-                    record.bigDataCorp.Result[0].RegistrationData.BasicData.TaxIdStatus;
-            }}
-          />
-          <DateField source="bigDataCorp.Result[0].RegistrationData.BasicData.TaxIdStatusDate" label="Data da Situação CPF" />
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 3, fontWeight: 'bold' }}>
-            Endereço
-          </Typography>
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.AddressMain" label="Logradouro" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Number" label="Número" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Complement" label="Complemento" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Neighborhood" label="Bairro" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.City" label="Cidade" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.State" label="Estado" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.ZipCode" label="CEP" />
-          <TextField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Country" label="País" />
-          <FunctionField
-            label="Tipo de Endereço"
-            render={(record: any) => {
-              const typeMap: Record<string, string> = {
-                'HOME': 'Residencial',
-                'WORK': 'Comercial'
-              };
-              return typeMap[record.bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Type] || 
-                    record.bigDataCorp.Result[0].RegistrationData.Addresses.Primary.Type;
-            }}
-          />
-          <DateField source="bigDataCorp.Result[0].RegistrationData.Addresses.Primary.LastUpdateDate" label="Última Atualização" />
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 3, fontWeight: 'bold' }}>
-            Contatos
-          </Typography>
-          <FunctionField
-            label="Telefone Principal"
-            render={(record: any) => {
-              const phone = record.bigDataCorp.Result[0].RegistrationData.Phones.Primary;
-              return phone ? `+${phone.CountryCode} (${phone.AreaCode}) ${phone.Number}` : 'Não informado';
-            }}
-          />
-          <FunctionField
-            label="Tipo de Telefone"
-            render={(record: any) => {
-              const typeMap: Record<string, string> = {
-                'MOBILE': 'Celular',
-                'LANDLINE': 'Fixo'
-              };
-              return typeMap[record.bigDataCorp.Result[0].RegistrationData.Phones.Primary.Type] || 
-                    record.bigDataCorp.Result[0].RegistrationData.Phones.Primary.Type;
-            }}
-          />
-          <DateField source="bigDataCorp.Result[0].RegistrationData.Phones.Primary.LastUpdateDate" label="Última Atualização" />
         </Tab>
 
         <Tab label="OMIE">

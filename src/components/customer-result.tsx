@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import ValidateShow from '../pages/validate';
+import ValidateShow from '../pages/validate-show';
 
 export const CustomerResult = () => {
   const location = useLocation();
