@@ -12,8 +12,6 @@ const ValidateDocumentShow = () => {
   const location = useLocation();
 
   const documentData = record || location.state?.documentData;
-  console.log('documentData')
-  console.log(documentData)
 
   if (!documentData) {
     return <div>Carregando dados do cliente...</div>;
