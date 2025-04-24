@@ -3,34 +3,6 @@ import { fetchUtils } from 'ra-core';
 
 const restProvider = (apiUrl: string): DataProvider => ({
     getOne: async (resource, params) => {
-
-        if (params.meta?.customerData) {
-            return {
-                data: {
-                    id: params.id || 'lookup-email-result',
-                    ...params.meta.customerData
-                }
-            };
-        }
-
-        if (params.meta?.documentData) {
-            return {
-                data: {
-                    id: params.id || 'lookup-document-result',
-                    ...params.meta.documentData
-                }
-            };
-        }
-
-        if (params.meta?.bigDataCorpData) {
-            return {
-                data: {
-                    id: params.id || 'bigdatacorp-result',
-                    ...params.meta.bigDataCorpData
-                }
-            };
-        }
-
         switch (resource) {
             case "customer-lookup":
                 if (params.meta?.email) {
@@ -71,6 +43,33 @@ const restProvider = (apiUrl: string): DataProvider => ({
                 }
                 break;
         }
+        if (params.meta?.customerData) {
+            return {
+                data: {
+                    id: params.id || 'lookup-email-result',
+                    ...params.meta.customerData
+                }
+            };
+        }
+
+        if (params.meta?.documentData) {
+            return {
+                data: {
+                    id: params.id || 'lookup-document-result',
+                    ...params.meta.documentData
+                }
+            };
+        }
+
+        if (params.meta?.bigDataCorpData) {
+            return {
+                data: {
+                    id: params.id || 'bigdatacorp-result',
+                    ...params.meta.bigDataCorpData
+                }
+            };
+        }
+
 
         const emptyData = {
             id: params.id || 'default-result',
