@@ -7,24 +7,89 @@ import {
   BooleanField,
   FunctionField,
   useRecordContext,
+  Button,
+  useNotify,
 } from 'react-admin';
 import { Typography, Chip, Box, Paper, Stack } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import AddHomeIcon from '@mui/icons-material/AddHome';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
+
 
 const ValidateShow = () => {
   const record = useRecordContext();
   const location = useLocation();
-
+  const navigate = useNavigate();
+  const notify = useNotify();
   const customerData = record || location.state?.customerData;
 
   if (!customerData) {
     return <div>Carregando dados do cliente...</div>;
   }
 
+  const handleBigDataCorp = () => {
+    if (!customerData.api4com?.cpfCnpj) {
+      notify('CPF/CNPJ não disponível para consulta', { type: 'error' });
+      return;
+    }
+    navigate('/big-data-corp', {
+      state: {
+        initialData: {
+          document: customerData.api4com.cpfCnpj
+        }
+      }
+    });
+  };
+
+  const handleUpdateAddress = () => {
+    if (!customerData.api4com?.cpfCnpj || !customerData.omie.clientes_cadastro[0].email) {
+      notify('Dados insuficientes para atualização', { type: 'error' });
+      return;
+    }
+    if (customerData.api4com.cpfCnpj.length > 11) {
+      notify('Essa ação só é possível caso o cliente tenha um CPF cadastrado no Omie', { type: 'error' });
+      return;
+    }
+
+    navigate('/cpf-without-address', {
+      state: {
+        initialData: {
+          email: customerData.omie.clientes_cadastro[0].email,
+          cpf: customerData.api4com.cpfCnpj
+        }
+      }
+    });
+  };
+
   return (
     <Show resource="customer-lookup" id={customerData.id || 'lookup-email-result'}>
       <TabbedShowLayout record={customerData} syncWithLocation={false}>
         <Tab label="API4COM">
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2, 
+            mt: 2
+          }}>
+            <Typography variant="subtitle1" sx={{ flexGrow: 1, alignSelf: 'center' }}>
+              Ações
+            </Typography>
+            <Button
+              label="Consultar Big Data Corp"
+              onClick={handleBigDataCorp}
+              variant="outlined"
+              color="primary"
+              startIcon={<ContentPasteSearchIcon />}
+            />
+            
+            <Button
+              label="Associar CPF Sem Endereço"
+              onClick={handleUpdateAddress}
+              variant="contained"
+              color="primary"
+              startIcon={<AddHomeIcon />}
+            />
+          </Box>
+
           <Typography variant="h6" gutterBottom sx={{ mt: 2, fontWeight: 'bold' }}>
             Informações API4Com
           </Typography>

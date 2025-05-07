@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useGetOne, useNotify, Button } from "react-admin";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { TextField, Box } from '@mui/material';
 
 export const BigDataCorp = () => {
-  const [document, setDocument] = useState("");
+  const location = useLocation();
+  const initialData = location.state?.initialData || {};
+
+  const [document, setDocument] = useState(initialData.document || "");
   const notify = useNotify();
   const navigate = useNavigate();
 

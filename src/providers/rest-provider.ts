@@ -105,9 +105,41 @@ const restProvider = (apiUrl: string): DataProvider => ({
                 throw new Error(`Método getList não implementado para o recurso ${resource}`);
         }
     },
+    create: async (resource, params) => {
+        switch (resource) {
+            case "cpf-without-address":
+                try {
+                    const { json } = await fetchUtils.fetchJson(`${apiUrl}/api/cpf-without-address`, {
+                        method: 'POST',
+                        body: JSON.stringify(params.data),
+                        headers: new Headers({
+                            'Content-Type': 'application/json',
+                        }),
+                    });
+
+                    if (!json.success) {
+                        throw new Error(json.message || 'Erro ao cadastrar CPF sem endereço');
+                    }
+
+                    return {
+                        data: {
+                            id: json.data?.id || 'cpf-without-address-result',
+                            ...json
+                        }
+                    };
+                } catch (error) {
+                    if (error instanceof Error) {
+                        throw new Error(`Erro na requisição: ${error.message}`);
+                    }
+                    throw new Error('Erro desconhecido ao cadastrar CPF sem endereço');
+                }
+
+            default:
+                throw new Error(`Método create não implementado para o recurso ${resource}`);
+        }
+    },
     getMany: () => Promise.reject('Not implemented'),
     getManyReference: () => Promise.reject('Not implemented'),
-    create: () => Promise.reject('Not implemented'),
     update: () => Promise.reject('Not implemented'),
     updateMany: () => Promise.reject('Not implemented'),
     delete: () => Promise.reject('Not implemented'),
