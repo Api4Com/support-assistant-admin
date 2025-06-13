@@ -10,7 +10,7 @@ services:
     volumes:
         - ./:/home/node/app
     ports:
-      - '3001:3001'
+      - '7010:7010'
     command: >
         sh -c "
         yarn install &&

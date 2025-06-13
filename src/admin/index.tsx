@@ -1,28 +1,37 @@
-import { Admin, CustomRoutes, Resource } from "react-admin";
-import { dataProvider } from "../providers/default";
+import { Admin, CustomRoutes } from "react-admin";
+import { dataProvider, i18nProvider } from "../providers/default";
 import { Route } from "react-router-dom";
 import { AdminLayout } from "./layout";
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import { CustomerLookup } from "./customer-lookup";
-import { CustomerResult } from "../components/customer-result";
-import { BigDataCorp } from "./big-data-corp";
-import { BigDataCorpResult } from "../components/big-data-corp-result";
-import { DocumentResult } from "../components/document-result";
+import { CustomerLookupEmailResult } from "../components/customer-lookup-email-result";
+import { CustomerLookupDocumentResult } from "../components/customer-lookup-document-result";
+import { DocumentLookup } from "./document-lookup";
+import { DocumentLookupResult } from "../components/document-lookup-result";
 
 const App = () => (
-  <Admin dataProvider={dataProvider} layout={AdminLayout}>
-    <Resource name="customer-lookup" options={{ label: 'Consultar Cliente' }} icon={PeopleAltIcon}/>
-    <Resource name="big-data-corp" options={{ label: 'Consultar BigDataCorp' }} icon={ContentPasteSearchIcon}/>
-    <CustomRoutes>
-      <Route path="/customer-lookup" element={<CustomerLookup />} />
-      <Route path="/customer-lookup/result" element={<CustomerResult />} />
-      <Route path="/document-lookup/result" element={<DocumentResult />} />
-      <Route path="/big-data-corp" element={<BigDataCorp />} />
-      <Route path="/big-data-corp/result" element={<BigDataCorpResult />} />
-    </CustomRoutes>
-  </Admin>
-  
+    <Admin
+        dataProvider={dataProvider}
+        i18nProvider={i18nProvider}
+        layout={AdminLayout}
+    >
+        <CustomRoutes>
+            <Route
+                element={<CustomerLookup />}
+                path="/customers/lookup" />
+            <Route
+                element={<CustomerLookupEmailResult />}
+                path="/customers/lookup/email/*" />
+            <Route
+                element={<CustomerLookupDocumentResult />}
+                path="/customers/lookup/document" />
+            <Route
+                element={<DocumentLookup />}
+                path="/documents/lookup" />
+            <Route
+                element={<DocumentLookupResult />}
+                path="/documents/lookup/result" />
+        </CustomRoutes>
+    </Admin>
 );
 
 export default App;

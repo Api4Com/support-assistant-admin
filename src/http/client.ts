@@ -1,11 +1,13 @@
-import { fetchUtils } from 'ra-core';
+import { fetchUtils, Options } from "ra-core";
 
-export const authHttpClient = (url: string, apiKey: string, options: any = {}) => {
+export const authHttpClient = (url: string, apiKey: string, options: Options = {}) => {
     if (!options.headers) {
-        options.headers = new Headers({ Accept: 'application/json' });
+        options.headers = new Headers({ Accept: "application/json" });
+    } else if (!(options.headers instanceof Headers)) {
+        options.headers = new Headers(options.headers as HeadersInit);
     }
-    options.headers.set('api-key', apiKey);
+    (options.headers as Headers).set("api-key", apiKey);
     return fetchUtils.fetchJson(url, options);
 };
 
-export const supportAssistantApiUrl = import.meta.env.SUPPORT_ASSISTANT_API_URL || 'http://localhost:3000'
+export const supportAssistantApiUrl = import.meta.env.VITE_SUPPORT_ASSISTANT_API_URL || "http://localhost:3000"

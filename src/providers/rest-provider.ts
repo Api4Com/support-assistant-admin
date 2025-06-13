@@ -1,117 +1,50 @@
-import { DataProvider } from 'react-admin';
-import { fetchUtils } from 'ra-core';
+import { DataProvider } from "react-admin";
+import { fetchUtils } from "ra-core";
 
-const restProvider = (apiUrl: string): DataProvider => ({
-    getOne: async (resource, params) => {
-        switch (resource) {
-            case "customer-lookup":
-                if (params.meta?.email) {
-                    const { json } = await fetchUtils.fetchJson(
-                        `${apiUrl}/api/validate?email=${encodeURIComponent(params.meta.email)}`
-                    );
-                    return {
-                        data: {
-                            id: 'lookup-email-result',
-                            ...json
-                        }
-                    };
-                }
-                if (params.meta?.document) {
-                    const { json } = await fetchUtils.fetchJson(
-                        `${apiUrl}/api/validate?document=${encodeURIComponent(params.meta.document)}`
-                    );
-                    return {
-                        data: {
-                            id: 'lookup-document-result',
-                            ...json
-                        }
-                    };
-                }
-                break;
+export interface DataProviderWithCustomMethods extends DataProvider {
+    lookupOne: (resource: string, params: {
+        id: string;
+        meta: { [key: string]: string | number | boolean; };
+    }) => Promise<{
+        data: { id: string;[key: string]: string | number | boolean | object | undefined };
+    }>;
+}
 
-            case "big-data-corp":
-                if (params.meta?.document) {
-                    const { json } = await fetchUtils.fetchJson(
-                        `${apiUrl}/api/big-data-corp?document=${encodeURIComponent(params.meta.document)}`
-                    );
-                    return {
-                        data: {
-                            id: 'bigdatacorp-result',
-                            ...json
-                        }
-                    };
-                }
-                break;
-        }
-        if (params.meta?.customerData) {
-            return {
-                data: {
-                    id: params.id || 'lookup-email-result',
-                    ...params.meta.customerData
-                }
-            };
-        }
-
-        if (params.meta?.documentData) {
-            return {
-                data: {
-                    id: params.id || 'lookup-document-result',
-                    ...params.meta.documentData
-                }
-            };
-        }
-
-        if (params.meta?.bigDataCorpData) {
-            return {
-                data: {
-                    id: params.id || 'bigdatacorp-result',
-                    ...params.meta.bigDataCorpData
-                }
-            };
-        }
-
-
-        const emptyData = {
-            id: params.id || 'default-result',
-            ...(resource === 'customer-lookup' && {
-                api4com: {},
-                bigDataCorp: { Result: [{}] },
-                omie: { clientes_cadastro: [{}] },
-                asaas: {}
-            }),
-            ...(resource === 'big-data-corp' && {
-                Result: [{
-                    RegistrationData: {
-                        BasicData: {},
-                        Addresses: { Primary: {} },
-                        Phones: { Primary: {} }
-                    }
-                }]
-            })
-        };
-
-        return { data: emptyData };
-    },
-
-    getList: (resource) => {
-        switch (resource) {
-            case "customer-lookup":
-            case "big-data-corp":
+const restProvider = (apiUrl: string): DataProviderWithCustomMethods => ({
+    lookupOne: async (resource, params) => {
+        if (resource && params.meta) {
+            const metaKeys = Object.keys(params.meta);
+            let queryParams = "";
+            if (metaKeys.length > 0) {
+                queryParams = metaKeys
+                    .filter(key => params.meta[key] !== "")
+                    .map(key => `${key}=${encodeURIComponent(params.meta[key])}`).join("&");
+            }
+            let url = `${apiUrl}/api/searcher/${resource}`;
+            if (queryParams) {
+                url += `?${queryParams}`;
+                const { json } = await fetchUtils.fetchJson(url);
                 return Promise.resolve({
-                    data: [],
-                    total: 0
+                    data: {
+                        id: params.id || `${resource}-lookup`,
+                        ...json
+                    }
                 });
-            default:
-                throw new Error(`Método getList não implementado para o recurso ${resource}`);
+            }
         }
+        return Promise.reject(`no data found for resource: ${resource} with params: ${JSON.stringify(params)}`);
     },
-    getMany: () => Promise.reject('Not implemented'),
-    getManyReference: () => Promise.reject('Not implemented'),
-    create: () => Promise.reject('Not implemented'),
-    update: () => Promise.reject('Not implemented'),
-    updateMany: () => Promise.reject('Not implemented'),
-    delete: () => Promise.reject('Not implemented'),
-    deleteMany: () => Promise.reject('Not implemented'),
+
+    getOne: () => Promise.reject("Not implemented"),
+    getList: () => Promise.reject("Not implemented"),
+    getMany: () => Promise.reject("Not implemented"),
+    getManyReference: () => Promise.reject("Not implemented"),
+    create: () => Promise.reject("Not implemented"),
+    update: () => Promise.reject("Not implemented"),
+    updateMany: () => Promise.reject("Not implemented"),
+    delete: () => Promise.reject("Not implemented"),
+    deleteMany: () => Promise.reject("Not implemented"),
+
 });
 
 export default restProvider;
