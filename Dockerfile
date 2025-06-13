@@ -37,6 +37,6 @@ RUN npm install
 # ENV NODE_ENV production
 # RUN npm install --omit=dev
 
-# EXPOSE 3000
+# EXPOSE 7010
 
 # CMD npm run start:prod
